@@ -1,5 +1,6 @@
 from pygame import *
 from random import randint
+font.init()
 
 # нам нужны такие картинки:
 img_back = "galaxy.jpg"  # фон игры
@@ -47,13 +48,13 @@ class Player(GameSprite):
 class Enemy(GameSprite):
     # движение врага
     def update(self):
-        self.rect.y += self.speed
         global lost
+        self.rect.y += self.speed
         # исчезает, если дойдет до края экрана
         if self.rect.y > win_height:
             self.rect.x = randint(80, win_width - 80)
             self.rect.y = 0
-            lost = lost + 1
+            lost += 1
 
 
 # Создаём окошко
@@ -65,6 +66,11 @@ background = transform.scale(image.load(img_back), (win_width, win_height))
 
 # создаём спрайты
 ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
+
+lost = 0
+
+font1 = font.Font(None, 38)
+counter = font1.render("Пропущено врагов: " + str(lost), True, (231, 45, 98))
 
 monsters = sprite.Group()
 for i in range(1, 6):
@@ -93,8 +99,9 @@ while run:
         ship.reset()
         monsters.draw(window)
 
+        counter = font1.render("Пропущено врагов: " + str(lost), True, (231, 45, 98))
+        window.blit(counter, (50, 30))
+
         display.update()
     # цикл срабатывает каждую 0.05 секунд
     time.delay(50)
-
-
