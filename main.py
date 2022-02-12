@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 pg.init()
 
 
@@ -24,14 +25,31 @@ class Player(GameSprite):
             self.rect.x += self.speed
 
 
+class Enemy(GameSprite):
+    def fall(self):
+        self.rect.y += self.player_speed
+        if self.rect.y > HEIGHT:
+            self.rect.y = 0
+            self.rect.x = random.randint(50, WIDTH - 50)
+
+
+WIDTH = 700
+HEIGHT = 500
+
+enemies = pg.sprite.Group()
+
+for i in range(5):
+    enemy = Enemy("ufo.png", random.randint(50, WIDTH - 50), -50, random.randint(1, 5))
+    enemies.add(enemy)
+
 window = pg.display.set_mode((700, 500))
-background = pg.transform.scale(pg.image.load('1200px-MarvelLogo.svg.png'), (700, 500))
+background = pg.transform.scale(pg.image.load('galaxy.jpg'), (WIDTH, HEIGHT))
 
 clock = pg.time.Clock()
 
 game = True
 
-player = Player("dc_logo.jpg", 300, 430, 10)
+player = Player("rocket.png", 300, 430, 10)
 
 while game:
     for _ in pg.event.get():
@@ -39,6 +57,9 @@ while game:
             game = False
 
     window.blit(background, (0, 0))
+
+    enemies.fall()
+    enemies.draw(window)
 
     player.reset()
     player.move()
